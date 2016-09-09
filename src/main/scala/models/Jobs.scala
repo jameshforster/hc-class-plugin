@@ -18,7 +18,5 @@ object Jobs {
 }
 
 trait Job {
-
   val jobName: String = this.getClass.getSimpleName.stripSuffix("$")
-
 }

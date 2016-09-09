@@ -7,9 +7,7 @@ import scala.util.{Success, Try}
   */
 
 case class PlayerJob (job: Job, level: Int, experience: Int) {
-
   val playerJobToString = s"job=${job.jobName}&level=${level.toString}&experience=${experience.toString}"
-
 }
 
 object PlayerJob {
