@@ -14,10 +14,7 @@ object PlayerJob {
 
   val stringToPlayerJob: String => PlayerJob = input => {
     val inputArray = input.split("&")
-    val jobName = Try(inputArray.apply(0).stripPrefix("job=")) match {
-      case Success(value) => value
-      case _ => "Jobless"
-    }
+    val jobName = inputArray.apply(0).stripPrefix("job=")
     val level = Try(inputArray.apply(1).stripPrefix("level=").toInt) match {
       case Success(value) => value
       case _ => 0
