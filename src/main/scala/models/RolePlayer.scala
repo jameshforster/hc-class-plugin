@@ -18,7 +18,7 @@ object RolePlayer {
 
   val stringToAllJobs: String => Seq[PlayerJob] = input => {
     val jobsArrayString = input.split(" ")
-    jobsArrayString.map(stringToPlayerJob).filterNot(_.equals(Jobs.Jobless))
+    jobsArrayString.map(stringToPlayerJob).filterNot(_.job.jobName.equals(Jobs.Jobless.jobName))
   }
 }
 
