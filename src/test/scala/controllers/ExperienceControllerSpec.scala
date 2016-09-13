@@ -39,4 +39,32 @@ class ExperienceControllerSpec extends AnyRef with WordSpecLike with Matchers wi
       result shouldBe None
     }
   }
+
+  "Calling experience remaining" should {
+
+    "return a None with a level of 0" in {
+      val result = ExperienceController.experienceRemaining(0, 0)
+      result shouldBe None
+    }
+
+    "return a None at max level" in {
+      val result = ExperienceController.experienceRemaining(20, 0)
+      result shouldBe None
+    }
+
+    "return a value equal to max exp at 0" in {
+      val result = ExperienceController.experienceRemaining(9, 0)
+      result shouldBe Some(260)
+    }
+
+    "return a value equal to 25 at level 5 with 26 experience" in {
+      val result = ExperienceController.experienceRemaining(5, 26)
+      result shouldBe Some(25)
+    }
+
+    "return a value equal to 10000 at level 19 with 5000 experience" in {
+      val result = ExperienceController.experienceRemaining(19, 5000)
+      result shouldBe Some(10000)
+    }
+  }
 }
