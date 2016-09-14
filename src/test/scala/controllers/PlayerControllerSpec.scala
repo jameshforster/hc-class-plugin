@@ -1,7 +1,7 @@
 package controllers
 
 import connectors.ServerConnector
-import models.{Jobs, PlayerJob}
+import models.{Jobs, PlayerJob, RolePlayer}
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import org.mockito.Matchers
@@ -22,9 +22,11 @@ class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.M
     when(mockServerConnector.getPlayerMetaData(Matchers.any(), Matchers.any()))
       .thenReturn(getMetadataResult)
 
+    when(mockServerConnector.setPlayerMetaData(Matchers.any(), Matchers.any(), Matchers.any()))
+      .thenReturn(getMetadataResult.isDefined)
+
     new PlayerController {
       override val serverConnector: ServerConnector = mockServerConnector
-      override val plugin: Plugin = mockPlugin
     }
   }
 
@@ -49,6 +51,27 @@ class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.M
       val result = target.getActivePlayerJob(mock[Player])
 
       result shouldBe Some(PlayerJob(Jobs.Warrior, 2, 5))
+    }
+  }
+
+  "Calling setActivePlayerJob" should {
+
+    "return a false if an error occurs" in {
+      val target = setupTarget(None)
+      val playerJob = PlayerJob(Jobs.Rogue, 1, 0)
+      val rolePlayer = RolePlayer(mock[Player], playerJob, Seq())
+      val result = target.setActivePlayerJob(rolePlayer)
+
+      result shouldBe false
+    }
+
+    "return a true if data is set correctly" in {
+      val target = setupTarget(Some(""))
+      val playerJob = PlayerJob(Jobs.Rogue, 1, 0)
+      val rolePlayer = RolePlayer(mock[Player], playerJob, Seq())
+      val result = target.setActivePlayerJob(rolePlayer)
+
+      result shouldBe true
     }
   }
 }

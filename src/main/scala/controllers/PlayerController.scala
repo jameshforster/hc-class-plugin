@@ -4,7 +4,7 @@ import connectors.ServerConnector
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import common.MetadataKeys.PlayerKeys
-import models.{Jobs, PlayerJob}
+import models.{Jobs, PlayerJob, RolePlayer}
 
 /**
   * Created by james-forster on 13/09/16.
@@ -12,14 +12,12 @@ import models.{Jobs, PlayerJob}
 
 object PlayerController extends PlayerController{
   // $COVERAGE-OFF$
-  lazy val plugin = PluginController.main.get
   lazy val serverConnector = ServerConnector
   // $COVERAGE-ON$
 }
 
 trait PlayerController {
 
-  val plugin: Plugin
   val serverConnector: ServerConnector
 
   def getActivePlayerJob(player: Player): Option[PlayerJob] = {
@@ -28,6 +26,10 @@ trait PlayerController {
         case Some(data) => Some(PlayerJob.stringToPlayerJob(data))
         case _ => None
       }
+  }
+
+  def setActivePlayerJob(rolePlayer: RolePlayer): Boolean = {
+    serverConnector.setPlayerMetaData(rolePlayer.player, rolePlayer.activeJob.playerJobToString, PlayerKeys.activeJob)
   }
 
 }
