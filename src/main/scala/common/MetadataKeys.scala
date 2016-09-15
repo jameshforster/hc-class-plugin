@@ -7,5 +7,6 @@ object MetadataKeys {
 
   object PlayerKeys {
     val activeJob = "activeJob"
+    val allJobs = "allJobs"
   }
 }

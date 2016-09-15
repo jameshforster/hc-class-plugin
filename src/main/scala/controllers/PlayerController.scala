@@ -32,4 +32,16 @@ trait PlayerController {
     serverConnector.setPlayerMetaData(rolePlayer.player, rolePlayer.activeJob.playerJobToString, PlayerKeys.activeJob)
   }
 
+  def getAllPlayerJobs(player: Player): Option[Seq[PlayerJob]] = {
+    serverConnector.getPlayerMetaData(player, PlayerKeys.allJobs) match {
+      case Some("") => Some(Seq())
+      case Some(data) => Some(RolePlayer.stringToAllJobs(data))
+      case _ => None
+    }
+  }
+
+  def setAllPlayerJobs(rolePlayer: RolePlayer): Boolean = {
+    serverConnector.setPlayerMetaData(rolePlayer.player, rolePlayer.allJobsToString, PlayerKeys.allJobs)
+  }
+
 }
