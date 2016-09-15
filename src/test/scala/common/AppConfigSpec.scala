@@ -37,6 +37,10 @@ class AppConfigSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers
       target.storageEnabled shouldBe true
     }
 
+    "set a boolean for storageEnabled" in {
+      target.databaseEnabled shouldBe true
+    }
+
     "set a string for databaseHost" in {
       target.databaseHost shouldBe "test"
     }

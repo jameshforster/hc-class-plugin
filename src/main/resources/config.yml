@@ -1,4 +1,5 @@
-storage: disabled
+storage: false
 database:
+  enabled: false
   location: localhost
   port: 27017

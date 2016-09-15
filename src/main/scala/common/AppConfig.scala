@@ -9,6 +9,7 @@ import org.bukkit.plugin.Plugin
 
 case class AppConfig (plugin: Plugin) {
   val storageEnabled: Boolean = plugin.getConfig.getBoolean("storage")
+  val databaseEnabled: Boolean = plugin.getConfig.getBoolean("database.enabled")
   val databaseHost: String = plugin.getConfig.getString("database.location")
   val databasePort: String = plugin.getConfig.getString("database.port")
 }
