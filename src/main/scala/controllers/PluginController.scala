@@ -1,5 +1,6 @@
 package controllers
 
+import common.AppConfig
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -8,11 +9,17 @@ import org.bukkit.plugin.java.JavaPlugin
 
 object PluginController {
   var main: Option[JavaPlugin] = None
+
+  def getConfig: Option[AppConfig] = {
+    if (main.isDefined) Some(AppConfig(main.get))
+    else None
+  }
 }
 
 final class Main extends JavaPlugin{
 
   override def onEnable() = {
+    this.saveDefaultConfig()
     PluginController.main = Some(this)
   }
 

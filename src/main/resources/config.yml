@@ -1,0 +1,4 @@
+storage: disabled
+database:
+  location: localhost
+  port: 27017
