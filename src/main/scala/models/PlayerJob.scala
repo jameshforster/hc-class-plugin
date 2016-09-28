@@ -6,13 +6,15 @@ import scala.util.{Success, Try}
   * Created by james-forster on 31/08/16.
   */
 
-case class PlayerJob (job: Job, level: Int, experience: Int) {
-  val playerJobToString = s"job=${job.jobName}&level=${level.toString}&experience=${experience.toString}"
-}
+case class PlayerJob (job: Job, level: Int, experience: Int)
 
 object PlayerJob {
 
-  val stringToPlayerJob: String => PlayerJob = input => {
+  implicit val playerJobToString: PlayerJob => String = { input =>
+    s"job=${input.job.jobName}&level=${input.level.toString}&experience=${input.experience.toString}"
+  }
+
+  implicit val stringToPlayerJob: String => PlayerJob = input => {
     val inputArray = input.split("&")
     val jobName = inputArray.apply(0).stripPrefix("job=")
     val level = Try(inputArray.apply(1).stripPrefix("level=").toInt) match {

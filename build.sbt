@@ -12,6 +12,7 @@ libraryDependencies += "net.md-5" % "bungeecord-api" % "1.10-SNAPSHOT"
 libraryDependencies += "org.spigotmc" % "spigot-api" % "1.10.2-R0.1-SNAPSHOT"
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 libraryDependencies += "org.mockito" % "mockito-core" % "1.9.5"
+libraryDependencies += "io.spray" %%  "spray-json" % "1.3.2"
 
 coverageMinimum := 90
 coverageFailOnMinimum := true

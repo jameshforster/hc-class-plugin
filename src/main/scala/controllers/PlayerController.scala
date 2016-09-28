@@ -1,16 +1,17 @@
 package controllers
 
-import connectors.ServerConnector
-import org.bukkit.entity.Player
-import org.bukkit.plugin.Plugin
 import common.MetadataKeys.PlayerKeys
-import models.{Jobs, PlayerJob, RolePlayer}
+import connectors.ServerConnector
+import models.{PlayerJob, RolePlayer}
+import org.bukkit.entity.Player
+import models.RolePlayer._
+import models.PlayerJob._
 
 /**
   * Created by james-forster on 13/09/16.
   */
 
-object PlayerController extends PlayerController{
+object PlayerController extends PlayerController {
   // $COVERAGE-OFF$
   lazy val serverConnector = ServerConnector
   // $COVERAGE-ON$
@@ -21,27 +22,19 @@ trait PlayerController {
   val serverConnector: ServerConnector
 
   def getActivePlayerJob(player: Player): Option[PlayerJob] = {
-      serverConnector.getPlayerMetaData(player, PlayerKeys.activeJob) match {
-        case Some("") => Some(PlayerJob(Jobs.Jobless, 0, 0))
-        case Some(data) => Some(PlayerJob.stringToPlayerJob(data))
-        case _ => None
-      }
+    serverConnector.getPlayerMetaData[PlayerJob](player, PlayerKeys.activeJob)
   }
 
   def setActivePlayerJob(rolePlayer: RolePlayer): Boolean = {
-    serverConnector.setPlayerMetaData(rolePlayer.player, rolePlayer.activeJob.playerJobToString, PlayerKeys.activeJob)
+    serverConnector.setPlayerMetaData[PlayerJob](rolePlayer.player, PlayerKeys.activeJob, rolePlayer.activeJob)
   }
 
   def getAllPlayerJobs(player: Player): Option[Seq[PlayerJob]] = {
-    serverConnector.getPlayerMetaData(player, PlayerKeys.allJobs) match {
-      case Some("") => Some(Seq())
-      case Some(data) => Some(RolePlayer.stringToAllJobs(data))
-      case _ => None
-    }
+    serverConnector.getPlayerMetaData[Seq[PlayerJob]](player, PlayerKeys.allJobs)
   }
 
   def setAllPlayerJobs(rolePlayer: RolePlayer): Boolean = {
-    serverConnector.setPlayerMetaData(rolePlayer.player, rolePlayer.allJobsToString, PlayerKeys.allJobs)
+    serverConnector.setPlayerMetaData[Seq[PlayerJob]](rolePlayer.player, PlayerKeys.allJobs, rolePlayer.allJobs)
   }
 
 }

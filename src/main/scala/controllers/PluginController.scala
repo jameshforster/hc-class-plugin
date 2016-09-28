@@ -20,6 +20,7 @@ final class Main extends JavaPlugin{
 
   override def onEnable() = {
     this.saveDefaultConfig()
+    this.getDataFolder
     PluginController.main = Some(this)
   }
 

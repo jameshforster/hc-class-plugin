@@ -13,7 +13,7 @@ class PlayerJobSpec extends AnyRef with WordSpecLike with Matchers with OptionVa
 
     "return a Job in string format" in {
       val playerJob = PlayerJob(Jobs.Jobless, 1, 500)
-      val result = playerJob.playerJobToString
+      val result = PlayerJob.playerJobToString(playerJob)
       result.shouldBe("job=Jobless&level=1&experience=500")
     }
   }

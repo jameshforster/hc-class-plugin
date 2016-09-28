@@ -22,7 +22,7 @@ trait ServerConnector {
 
   val plugin: Plugin
 
-  def setPlayerMetaData(player: Player, key: String, data: String): Boolean = Try {
+  def setPlayerMetaData[T](player: Player, key: String, data: T)(implicit writes: T => String): Boolean = Try {
     player.setMetadata(key, new FixedMetadataValue(plugin, data))
   }.isSuccess
 
@@ -37,7 +37,7 @@ trait ServerConnector {
     case Failure(exception) => None
   }
 
-  def getPlayerMetaData(player: Player, key: String): Option[String] = Try {
+  def getPlayerMetaData[T](player: Player, key: String)(implicit reads: String => T): Option[T] = Try {
     player.getMetadata(key).asScala.filter(result => result.getOwningPlugin.equals(plugin)) match {
       case a if a.nonEmpty => a.head.asString()
       case _ => ""

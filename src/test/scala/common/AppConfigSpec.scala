@@ -1,5 +1,7 @@
 package common
 
+import java.io.File
+
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.plugin.Plugin
 import org.mockito.Matchers
@@ -16,12 +18,19 @@ class AppConfigSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers
 
     val mockPlugin = mock[Plugin]
     val mockConfig = mock[FileConfiguration]
+    val mockFolder = mock[File]
 
     when(mockConfig.getBoolean(Matchers.any()))
       .thenReturn(mockBoolean)
 
     when(mockConfig.getString(Matchers.any()))
       .thenReturn(mockString)
+
+    when(mockFolder.getAbsolutePath)
+      .thenReturn(mockString)
+
+    when(mockPlugin.getDataFolder)
+      .thenReturn(mockFolder)
 
     when(mockPlugin.getConfig)
       .thenReturn(mockConfig)
@@ -37,7 +46,7 @@ class AppConfigSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers
       target.storageEnabled shouldBe true
     }
 
-    "set a boolean for storageEnabled" in {
+    "set a boolean for databaseEnabled" in {
       target.databaseEnabled shouldBe true
     }
 
@@ -47,6 +56,10 @@ class AppConfigSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers
 
     "set a string for databasePort" in {
       target.databasePort shouldBe "test"
+    }
+
+    "set a string for pluginLocation" in {
+      target.pluginLocation shouldBe "test"
     }
   }
 }

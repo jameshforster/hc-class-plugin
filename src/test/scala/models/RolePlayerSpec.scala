@@ -21,7 +21,7 @@ class RolePlayerSpec extends AnyRef with WordSpecLike with Matchers with OptionV
     val target = setupTarget(warrior, Seq(warrior))
 
     "calls allJobsToString" should {
-      val result = target.allJobsToString
+      val result = RolePlayer.allJobsToString(target.allJobs)
 
       "return a string containing their only job" in {
         result shouldBe "job=Warrior&level=5&experience=200 "
@@ -45,7 +45,7 @@ class RolePlayerSpec extends AnyRef with WordSpecLike with Matchers with OptionV
     val target = setupTarget(warrior, Seq(warrior, wizard, jobless))
 
     "calls allJobsToString" should {
-      val result = target.allJobsToString
+      val result = RolePlayer.allJobsToString(target.allJobs)
 
       "return a string containing all their jobs" in {
         result shouldBe "job=Warrior&level=5&experience=200 job=Wizard&level=1&experience=0 job=Jobless&level=0&experience=0 "

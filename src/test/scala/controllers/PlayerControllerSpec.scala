@@ -14,20 +14,20 @@ import org.scalatest.{OptionValues, WordSpecLike}
   */
 class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers with OptionValues with MockitoSugar {
 
-  def setupTarget(getPlayerJob: Option[String], getAllPlayerJobs: Option[String]) = {
+  def setupTarget(getPlayerJob: Option[PlayerJob], getAllPlayerJobs: Option[Seq[PlayerJob]]) = {
 
     val mockServerConnector = mock[ServerConnector]
 
-    when(mockServerConnector.getPlayerMetaData(Matchers.any(), Matchers.eq(PlayerKeys.activeJob)))
+    when(mockServerConnector.getPlayerMetaData[PlayerJob](Matchers.any(), Matchers.eq(PlayerKeys.activeJob))(Matchers.any()))
       .thenReturn(getPlayerJob)
 
-    when(mockServerConnector.getPlayerMetaData(Matchers.any(), Matchers.eq(PlayerKeys.allJobs)))
+    when(mockServerConnector.getPlayerMetaData[Seq[PlayerJob]](Matchers.any(), Matchers.eq(PlayerKeys.allJobs))(Matchers.any()))
       .thenReturn(getAllPlayerJobs)
 
-    when(mockServerConnector.setPlayerMetaData(Matchers.any(), Matchers.any(), Matchers.eq(PlayerKeys.activeJob)))
+    when(mockServerConnector.setPlayerMetaData(Matchers.any(), Matchers.eq(PlayerKeys.activeJob), Matchers.any())(Matchers.any()))
       .thenReturn(getPlayerJob.isDefined)
 
-    when(mockServerConnector.setPlayerMetaData(Matchers.any(), Matchers.any(), Matchers.eq(PlayerKeys.allJobs)))
+    when(mockServerConnector.setPlayerMetaData(Matchers.any(), Matchers.eq(PlayerKeys.allJobs), Matchers.any())(Matchers.any()))
       .thenReturn(getAllPlayerJobs.isDefined)
 
     new PlayerController {
@@ -90,14 +90,14 @@ class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.M
     }
 
     "return an empty Seq when no jobs are found" in {
-      val target = setupTarget(None, Some(""))
+      val target = setupTarget(None, Some(Seq()))
       val result = target.getAllPlayerJobs(mock[Player])
 
       result shouldBe Some(Seq())
     }
 
     "return a valid sequence when data is found" in {
-      val allJobs = "job=Warrior&level=1&experience=10 job=Rogue&level=5&experience=42 job=Jobless&level=0&experience=0 invalidString"
+      val allJobs = Seq(PlayerJob(Jobs.Warrior,1,10), PlayerJob(Jobs.Rogue,5,42))
       val target = setupTarget(None, Some(allJobs))
       val result = target.getAllPlayerJobs(mock[Player])
 
@@ -117,7 +117,7 @@ class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.M
     }
 
     "return a true if data is set correctly" in {
-      val target = setupTarget(None, Some(""))
+      val target = setupTarget(None, Some(Seq()))
       val allJobs = Seq(PlayerJob(Jobs.Warrior,1,10), PlayerJob(Jobs.Rogue,5,42))
       val rolePlayer = RolePlayer(mock[Player], mock[PlayerJob], allJobs)
       val result = target.setAllPlayerJobs(rolePlayer)
