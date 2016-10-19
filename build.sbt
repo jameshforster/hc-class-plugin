@@ -16,4 +16,4 @@ libraryDependencies += "io.spray" %%  "spray-json" % "1.3.2"
 
 coverageMinimum := 90
 coverageFailOnMinimum := true
-coverageExcludedPackages := "controllers.PluginController;controllers.Main"
+coverageExcludedPackages := "controllers.PluginController;controllers.Main;common.JsonConverters;listeners.*"

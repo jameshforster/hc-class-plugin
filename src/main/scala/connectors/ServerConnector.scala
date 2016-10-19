@@ -26,24 +26,24 @@ trait ServerConnector {
     player.setMetadata(key, new FixedMetadataValue(plugin, data))
   }.isSuccess
 
-  def removePlayerMetaData(player: Player, key: String): Option[Boolean] = Try {
+  def removePlayerMetaData(player: Player, key: String): Either[String, Boolean] = Try {
     if (player.getMetadata(key).asScala.nonEmpty) {
       player.removeMetadata(key, plugin)
       true
     }
     else false
   } match {
-    case Success(data) => Some(data)
-    case Failure(exception) => None
+    case Success(data) => Right(data)
+    case Failure(exception) => Left("Could not connect to server")
   }
 
-  def getPlayerMetaData[T](player: Player, key: String)(implicit reads: String => T): Option[T] = Try {
+  def getPlayerMetaData[T](player: Player, key: String)(implicit reads: String => T): Either[String, T] = Try {
     player.getMetadata(key).asScala.filter(result => result.getOwningPlugin.equals(plugin)) match {
       case a if a.nonEmpty => a.head.asString()
       case _ => ""
     }
   } match {
-    case Success(data) => Some(data)
-    case Failure(exception) => None
+    case Success(data) => Right(data)
+    case Failure(exception) => Left("Could not connect to server")
   }
 }

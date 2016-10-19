@@ -1,6 +1,7 @@
 package controllers
 
 import common.AppConfig
+import listeners.LoginListener
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -22,6 +23,7 @@ final class Main extends JavaPlugin{
     this.saveDefaultConfig()
     this.getDataFolder
     PluginController.main = Some(this)
+    new LoginListener(this)
   }
 
   override def onDisable() = {

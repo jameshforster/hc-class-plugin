@@ -82,7 +82,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
       val player = setupPlayer(true, connector.plugin)
       val result = connector.getPlayerMetaData(player, "testKey")
 
-      result shouldBe None
+      result shouldBe Left("Could not connect to server")
     }
 
     "return an empty string when unsuccessful" in {
@@ -90,7 +90,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
       val player = setupPlayer(false, connector.plugin)
       val result = connector.getPlayerMetaData(player, "testKey")
 
-      result shouldBe Some("")
+      result shouldBe Right("")
     }
 
     "return a value when successful" in {
@@ -98,7 +98,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
       val player = setupPlayer(false, connector.plugin, "value")
       val result = connector.getPlayerMetaData(player, "testKey")
 
-      result shouldBe Some("value")
+      result shouldBe Right("value")
     }
   }
 
@@ -109,7 +109,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
       val player = setupPlayer(true, connector.plugin)
       val result = connector.removePlayerMetaData(player, "testKey")
 
-      result shouldBe None
+      result shouldBe Left("Could not connect to server")
     }
 
     "return a false when no value is found" in {
@@ -117,7 +117,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
       val player = setupPlayer(false, connector.plugin)
       val result = connector.removePlayerMetaData(player, "testKey")
 
-      result shouldBe Some(false)
+      result shouldBe Right(false)
     }
 
     "return a true when a value is found and deleted" in {
@@ -125,7 +125,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
       val player = setupPlayer(false, connector.plugin, "value")
       val result = connector.removePlayerMetaData(player, "testKey")
 
-      result shouldBe Some(true)
+      result shouldBe Right(true)
     }
   }
 }
