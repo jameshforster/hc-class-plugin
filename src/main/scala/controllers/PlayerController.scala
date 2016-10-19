@@ -10,6 +10,8 @@ import models.RolePlayer._
 import models.{PlayerJob, RolePlayer}
 import org.bukkit.entity.Player
 
+import scala.util.Try
+
 
 /**
   * Created by james-forster on 13/09/16.
@@ -28,19 +30,19 @@ trait PlayerController {
   val serverConnector: ServerConnector
   val config: AppConfig
 
-  def getActivePlayerJob(player: Player): Either[String, PlayerJob] = {
+  def getActivePlayerJob(player: Player): Try[PlayerJob] = {
     serverConnector.getPlayerMetaData[PlayerJob](player, PlayerKeys.activeJob)
   }
 
-  def setActivePlayerJob(rolePlayer: RolePlayer): Boolean = {
+  def setActivePlayerJob(rolePlayer: RolePlayer): Try[Unit] = {
     serverConnector.setPlayerMetaData[PlayerJob](rolePlayer.player, PlayerKeys.activeJob, rolePlayer.activeJob)
   }
 
-  def getAllPlayerJobs(player: Player): Either[String, Seq[PlayerJob]] = {
+  def getAllPlayerJobs(player: Player): Try[Seq[PlayerJob]] = {
     serverConnector.getPlayerMetaData[Seq[PlayerJob]](player, PlayerKeys.allJobs)
   }
 
-  def setAllPlayerJobs(rolePlayer: RolePlayer): Boolean = {
+  def setAllPlayerJobs(rolePlayer: RolePlayer): Try[Unit] = {
     serverConnector.setPlayerMetaData[Seq[PlayerJob]](rolePlayer.player, PlayerKeys.allJobs, rolePlayer.allJobs)
   }
 }

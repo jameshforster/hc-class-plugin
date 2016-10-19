@@ -15,8 +15,8 @@ class LoginListener(plugin: Plugin) extends Listener {
 
   @EventHandler
   def onLogin(playerLoginEvent: PlayerLoginEvent): Unit = {
-    val player = playerLoginEvent.getPlayer
-    val message = LoginController.login(player)
-    playerLoginEvent.getPlayer.sendMessage(message)
+//    val player = playerLoginEvent.getPlayer
+//    val message = LoginController.login(player)
+//    playerLoginEvent.getPlayer.sendMessage(message)
   }
 }

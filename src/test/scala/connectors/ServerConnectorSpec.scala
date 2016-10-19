@@ -7,13 +7,16 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{OptionValues, WordSpecLike}
 import org.mockito.Matchers
 import org.mockito.Mockito._
-
+import models.CustomExceptions._
 import collection.JavaConverters._
+import scala.util.{Failure, Success}
 
 /**
   * Created by james-forster on 12/09/16.
   */
 class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers with OptionValues with MockitoSugar {
+
+  val illegalArgumentException = new IllegalArgumentException
 
   def setupConnector(): ServerConnector = {
 
@@ -37,11 +40,11 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     if (fails) {
       when(mockPlayer.setMetadata(Matchers.any(), Matchers.any()))
-        .thenThrow(new IllegalArgumentException)
+        .thenThrow(illegalArgumentException)
       when(mockPlayer.getMetadata(Matchers.any()))
-        .thenThrow(new IllegalArgumentException)
+        .thenThrow(illegalArgumentException)
       when(mockPlayer.removeMetadata(Matchers.any(), Matchers.any()))
-        .thenThrow(new IllegalArgumentException)
+        .thenThrow(illegalArgumentException)
     } else {
       if (data.equals("")) {
         when(mockPlayer.getMetadata(Matchers.any()))
@@ -58,74 +61,74 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
   "Calling the setPlayerMetaData method" should {
 
-    "return a false when failing" in {
+    "return a Failure when failing" in {
       val connector = setupConnector()
       val player = setupPlayer(true, connector.plugin)
       val result = connector.setPlayerMetaData(player, "testKey", "testData")
 
-      result shouldBe false
+      result shouldBe Failure(illegalArgumentException)
     }
 
-    "return a true when successful" in {
+    "return a Success when successful" in {
       val connector = setupConnector()
       val player = setupPlayer(false, connector.plugin)
       val result = connector.setPlayerMetaData(player, "testKey", "testData")
 
-      result shouldBe true
+      result shouldBe Success()
     }
   }
 
   "Calling the getPlayerMetaData method" should {
 
-    "return a None when failing" in {
+    "return a Failure when failing" in {
       val connector = setupConnector()
       val player = setupPlayer(true, connector.plugin)
       val result = connector.getPlayerMetaData(player, "testKey")
 
-      result shouldBe Left("Could not connect to server")
+      result shouldBe Failure(illegalArgumentException)
     }
 
-    "return an empty string when unsuccessful" in {
+    "return a Failure when no data is found" in {
       val connector = setupConnector()
       val player = setupPlayer(false, connector.plugin)
       val result = connector.getPlayerMetaData(player, "testKey")
 
-      result shouldBe Right("")
+      result shouldBe Failure(MetaDataNotFoundException())
     }
 
-    "return a value when successful" in {
+    "return a Success when successful" in {
       val connector = setupConnector()
       val player = setupPlayer(false, connector.plugin, "value")
       val result = connector.getPlayerMetaData(player, "testKey")
 
-      result shouldBe Right("value")
+      result shouldBe Success("value")
     }
   }
 
   "Calling the removePlayerMetaData method" should {
 
-    "return a None when failing" in {
+    "return a Failure when failing" in {
       val connector = setupConnector()
       val player = setupPlayer(true, connector.plugin)
       val result = connector.removePlayerMetaData(player, "testKey")
 
-      result shouldBe Left("Could not connect to server")
+      result shouldBe Failure(illegalArgumentException)
     }
 
-    "return a false when no value is found" in {
+    "return a Failure(MetaDataNotFoundException) when no value is found" in {
       val connector = setupConnector()
       val player = setupPlayer(false, connector.plugin)
       val result = connector.removePlayerMetaData(player, "testKey")
 
-      result shouldBe Right(false)
+      result shouldBe Failure(MetaDataNotFoundException())
     }
 
-    "return a true when a value is found and deleted" in {
+    "return a Success when a value is found and deleted" in {
       val connector = setupConnector()
       val player = setupPlayer(false, connector.plugin, "value")
       val result = connector.removePlayerMetaData(player, "testKey")
 
-      result shouldBe Right(true)
+      result shouldBe Success()
     }
   }
 }

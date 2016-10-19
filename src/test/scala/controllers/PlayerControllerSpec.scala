@@ -10,12 +10,16 @@ import org.mockito.Mockito._
 import org.scalatest.mock.MockitoSugar
 import org.scalatest.{OptionValues, WordSpecLike}
 
+import scala.util.{Failure, Success, Try}
+
 /**
   * Created by james-forster on 13/09/16.
   */
 class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers with OptionValues with MockitoSugar {
 
-  def setupTarget(getPlayerJob: Either[String, PlayerJob], getAllPlayerJobs: Either[String, Seq[PlayerJob]]) = {
+  val illegalArgumentException = new IllegalArgumentException
+
+  def setupTarget(getPlayerJob: Try[PlayerJob], getAllPlayerJobs: Try[Seq[PlayerJob]]) = {
 
     val mockServerConnector = mock[ServerConnector]
     val mockConfig = mock[AppConfig]
@@ -27,10 +31,10 @@ class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.M
       .thenReturn(getAllPlayerJobs)
 
     when(mockServerConnector.setPlayerMetaData(Matchers.any(), Matchers.eq(PlayerKeys.activeJob), Matchers.any())(Matchers.any()))
-      .thenReturn(getPlayerJob.isRight)
+      .thenReturn(if (getPlayerJob.isSuccess) Success() else Failure(illegalArgumentException))
 
     when(mockServerConnector.setPlayerMetaData(Matchers.any(), Matchers.eq(PlayerKeys.allJobs), Matchers.any())(Matchers.any()))
-      .thenReturn(getAllPlayerJobs.isRight)
+      .thenReturn(if (getAllPlayerJobs.isSuccess) Success() else Failure(illegalArgumentException))
 
     new PlayerController {
       override val config: AppConfig = mockConfig
@@ -40,92 +44,78 @@ class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.M
 
   "Calling getActivePlayerJob" should {
 
-    "return a None when an error occurs" in {
-      val target = setupTarget(Left(""), Left(""))
+    "return a Failure when an error occurs" in {
+      val target = setupTarget(Failure(illegalArgumentException), Failure(illegalArgumentException))
       val result = target.getActivePlayerJob(mock[Player])
 
-      result shouldBe Left("")
-    }
-
-    "return Jobless when no data is found" in {
-      val target = setupTarget(Right(""), Left(""))
-      val result = target.getActivePlayerJob(mock[Player])
-
-      result shouldBe Right(PlayerJob(Jobs.Jobless, 0, 0))
+      result shouldBe Failure(illegalArgumentException)
     }
 
     "return a Warrior Job when data is found" in {
-      val target = setupTarget(Right("job=Warrior&level=2&experience=5"), Left(""))
+      val target = setupTarget(Success("job=Warrior&level=2&experience=5"), Failure(illegalArgumentException))
       val result = target.getActivePlayerJob(mock[Player])
 
-      result shouldBe Right(PlayerJob(Jobs.Warrior, 2, 5))
+      result shouldBe Success(PlayerJob(Jobs.Warrior, 2, 5))
     }
   }
 
   "Calling setActivePlayerJob" should {
 
-    "return a false if an error occurs" in {
-      val target = setupTarget(Left(""), Left(""))
+    "return a Failure if an error occurs" in {
+      val target = setupTarget(Failure(illegalArgumentException), Failure(illegalArgumentException))
       val playerJob = PlayerJob(Jobs.Rogue, 1, 0)
       val rolePlayer = RolePlayer(mock[Player], playerJob, Seq())
       val result = target.setActivePlayerJob(rolePlayer)
 
-      result shouldBe false
+      result shouldBe Failure(illegalArgumentException)
     }
 
-    "return a true if data is set correctly" in {
-      val target = setupTarget(Right(""), Left(""))
+    "return a Success if data is set correctly" in {
+      val target = setupTarget(Success(""), Failure(illegalArgumentException))
       val playerJob = PlayerJob(Jobs.Rogue, 1, 0)
       val rolePlayer = RolePlayer(mock[Player], playerJob, Seq())
       val result = target.setActivePlayerJob(rolePlayer)
 
-      result shouldBe true
+      result shouldBe Success()
     }
   }
 
   "Calling getAllPlayerJobs" should {
 
-    "return a Left when an error occurs" in {
-      val target = setupTarget(Left(""), Left(""))
+    "return a Failure when an error occurs" in {
+      val target = setupTarget(Failure(illegalArgumentException), Failure(illegalArgumentException))
       val result = target.getAllPlayerJobs(mock[Player])
 
-      result shouldBe Left("")
+      result shouldBe Failure(illegalArgumentException)
     }
 
-    "return an empty Seq when no jobs are found" in {
-      val target = setupTarget(Left(""), Right(Seq()))
-      val result = target.getAllPlayerJobs(mock[Player])
-
-      result shouldBe Right(Seq())
-    }
-
-    "return a valid sequence when data is found" in {
+    "return a Success when data is found" in {
       val allJobs = Seq(PlayerJob(Jobs.Warrior,1,10), PlayerJob(Jobs.Rogue,5,42))
-      val target = setupTarget(Left(""), Right(allJobs))
+      val target = setupTarget(Failure(illegalArgumentException), Success(allJobs))
       val result = target.getAllPlayerJobs(mock[Player])
 
-      result shouldBe Right(Seq(PlayerJob(Jobs.Warrior,1,10), PlayerJob(Jobs.Rogue,5,42)))
+      result shouldBe Success(Seq(PlayerJob(Jobs.Warrior,1,10), PlayerJob(Jobs.Rogue,5,42)))
     }
   }
 
   "Calling setAllPlayerJobs" should {
 
-    "return a false if an error occurs" in {
-      val target = setupTarget(Left(""), Left(""))
+    "return a Failure if an error occurs" in {
+      val target = setupTarget(Failure(illegalArgumentException), Failure(illegalArgumentException))
       val allJobs = Seq(PlayerJob(Jobs.Warrior,1,10), PlayerJob(Jobs.Rogue,5,42))
       val rolePlayer = RolePlayer(mock[Player], mock[PlayerJob], allJobs)
       val result = target.setAllPlayerJobs(rolePlayer)
 
-      result shouldBe false
+      result shouldBe Failure(illegalArgumentException)
     }
 
-    "return a true if data is set correctly" in {
-      val target = setupTarget(Left(""), Right(Seq()))
+    "return a Success if data is set correctly" in {
+      val target = setupTarget(Failure(illegalArgumentException), Success(Seq()))
       val allJobs = Seq(PlayerJob(Jobs.Warrior,1,10), PlayerJob(Jobs.Rogue,5,42))
       val rolePlayer = RolePlayer(mock[Player], mock[PlayerJob], allJobs)
       val result = target.setAllPlayerJobs(rolePlayer)
 
-      result shouldBe true
+      result shouldBe Success()
     }
   }
 }
