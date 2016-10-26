@@ -1,10 +1,10 @@
 package connectors
 
+import common.UnitSpec
 import org.bukkit.entity.Player
 import org.bukkit.metadata.MetadataValue
 import org.bukkit.plugin.Plugin
 import org.scalatest.mock.MockitoSugar
-import org.scalatest.{OptionValues, WordSpecLike}
 import org.mockito.Matchers
 import org.mockito.Mockito._
 import collection.JavaConverters._
@@ -14,7 +14,7 @@ import common.exceptions.MetaDataNotFoundException
 /**
   * Created by james-forster on 12/09/16.
   */
-class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers with OptionValues with MockitoSugar {
+class ServerConnectorSpec extends UnitSpec with MockitoSugar {
 
   val illegalArgumentException = new IllegalArgumentException
 
@@ -63,7 +63,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Failure when failing" in {
       val connector = setupConnector()
-      val player = setupPlayer(true, connector.plugin)
+      val player = setupPlayer(fails = true, connector.plugin)
       val result = connector.setPlayerMetaData(player, "testKey", "testData")
 
       result shouldBe Failure(illegalArgumentException)
@@ -71,7 +71,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Success when successful" in {
       val connector = setupConnector()
-      val player = setupPlayer(false, connector.plugin)
+      val player = setupPlayer(fails = false, connector.plugin)
       val result = connector.setPlayerMetaData(player, "testKey", "testData")
 
       result shouldBe Success()
@@ -82,7 +82,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Failure when failing" in {
       val connector = setupConnector()
-      val player = setupPlayer(true, connector.plugin)
+      val player = setupPlayer(fails = true, connector.plugin)
       val result = connector.getPlayerMetaData(player, "testKey")
 
       result shouldBe Failure(illegalArgumentException)
@@ -90,7 +90,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Failure when no data is found" in {
       val connector = setupConnector()
-      val player = setupPlayer(false, connector.plugin)
+      val player = setupPlayer(fails = false, connector.plugin)
       val result = connector.getPlayerMetaData(player, "testKey")
 
       result shouldBe Failure(MetaDataNotFoundException())
@@ -98,7 +98,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Success when successful" in {
       val connector = setupConnector()
-      val player = setupPlayer(false, connector.plugin, "value")
+      val player = setupPlayer(fails = false, connector.plugin, "value")
       val result = connector.getPlayerMetaData(player, "testKey")
 
       result shouldBe Success("value")
@@ -109,7 +109,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Failure when failing" in {
       val connector = setupConnector()
-      val player = setupPlayer(true, connector.plugin)
+      val player = setupPlayer(fails = true, connector.plugin)
       val result = connector.removePlayerMetaData(player, "testKey")
 
       result shouldBe Failure(illegalArgumentException)
@@ -117,7 +117,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Failure(MetaDataNotFoundException) when no value is found" in {
       val connector = setupConnector()
-      val player = setupPlayer(false, connector.plugin)
+      val player = setupPlayer(fails = false, connector.plugin)
       val result = connector.removePlayerMetaData(player, "testKey")
 
       result shouldBe Failure(MetaDataNotFoundException())
@@ -125,7 +125,7 @@ class ServerConnectorSpec extends AnyRef with WordSpecLike with org.scalatest.Ma
 
     "return a Success when a value is found and deleted" in {
       val connector = setupConnector()
-      val player = setupPlayer(false, connector.plugin, "value")
+      val player = setupPlayer(fails = false, connector.plugin, "value")
       val result = connector.removePlayerMetaData(player, "testKey")
 
       result shouldBe Success()

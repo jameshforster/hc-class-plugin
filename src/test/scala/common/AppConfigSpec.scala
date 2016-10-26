@@ -39,7 +39,7 @@ class AppConfigSpec extends AnyRef with WordSpecLike with org.scalatest.Matchers
   }
 
   "Setting the config values" should {
-    val mockPlugin = configMock(true, "test")
+    val mockPlugin = configMock(mockBoolean = true, "test")
     val target = AppConfig(mockPlugin)
 
     "set a boolean for storageEnabled" in {
