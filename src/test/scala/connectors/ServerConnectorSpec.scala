@@ -7,9 +7,9 @@ import org.scalatest.mock.MockitoSugar
 import org.scalatest.{OptionValues, WordSpecLike}
 import org.mockito.Matchers
 import org.mockito.Mockito._
-import models.CustomExceptions._
 import collection.JavaConverters._
 import scala.util.{Failure, Success}
+import common.exceptions.MetaDataNotFoundException
 
 /**
   * Created by james-forster on 12/09/16.

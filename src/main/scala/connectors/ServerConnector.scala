@@ -1,13 +1,13 @@
 package connectors
 
 import controllers.PluginController
-import models.CustomExceptions._
+import common.exceptions.MetaDataNotFoundException
 import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 import org.bukkit.plugin.Plugin
 
 import collection.JavaConverters._
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 /**
   * Created by james-forster on 08/09/16.
