@@ -118,4 +118,39 @@ class PlayerControllerSpec extends AnyRef with WordSpecLike with org.scalatest.M
       result shouldBe Success()
     }
   }
+
+  "Calling updatePlayerJob" should {
+
+    "update the details of the job if active" in {
+      val mockPlayer = mock[Player]
+      val initialActiveJob = PlayerJob(Jobs.Wizard, 4, 5)
+      val extraJob = PlayerJob(Jobs.Rogue, 4,2)
+      val targetActiveJob = PlayerJob(Jobs.Wizard, 5, 6)
+      val rolePlayer = RolePlayer(mockPlayer, initialActiveJob, Seq(initialActiveJob, extraJob))
+      val result = PlayerController.updatePlayerJob(rolePlayer, targetActiveJob)
+
+      result shouldBe RolePlayer(mockPlayer, targetActiveJob, Seq(targetActiveJob, extraJob))
+    }
+
+    "update the details of the job and set to active if not" in {
+      val mockPlayer = mock[Player]
+      val initialActiveJob = PlayerJob(Jobs.Wizard, 4, 5)
+      val extraJob = PlayerJob(Jobs.Rogue, 4,2)
+      val targetActiveJob = PlayerJob(Jobs.Wizard, 5, 6)
+      val rolePlayer = RolePlayer(mockPlayer, extraJob, Seq(initialActiveJob, extraJob))
+      val result = PlayerController.updatePlayerJob(rolePlayer, targetActiveJob)
+
+      result shouldBe RolePlayer(mockPlayer, targetActiveJob, Seq(targetActiveJob, extraJob))
+    }
+
+    "create the job and set to active if it doesn't exist" in {
+      val mockPlayer = mock[Player]
+      val extraJob = PlayerJob(Jobs.Rogue, 4,2)
+      val targetActiveJob = PlayerJob(Jobs.Wizard, 5, 6)
+      val rolePlayer = RolePlayer(mockPlayer, extraJob, Seq(extraJob))
+      val result = PlayerController.updatePlayerJob(rolePlayer, targetActiveJob)
+
+      result shouldBe RolePlayer(mockPlayer, targetActiveJob, Seq(extraJob, targetActiveJob))
+    }
+  }
 }

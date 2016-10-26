@@ -3,6 +3,7 @@ package controllers
 import java.math.MathContext
 
 import common.Maths
+import models.{PlayerJob, RolePlayer}
 
 /**
   * Created by jamez on 13/09/2016.
@@ -22,6 +23,16 @@ trait ExperienceController {
     maxExperience(level) match {
       case Some(data) => Some(Maths.negativeToZero(data - experience))
       case _ => None
+    }
+  }
+
+  def gainExperience(rolePlayer: RolePlayer, experience: Int): RolePlayer = {
+    val activeJob = rolePlayer.activeJob
+    experienceRemaining(activeJob.level, activeJob.experience) match {
+      case Some(data) if data > experience =>
+        PlayerController.updatePlayerJob(rolePlayer, PlayerJob(activeJob.job, activeJob.level, activeJob.experience + experience))
+      case Some(data) if data <= experience => ??? //TODO add level up method
+      case _ => rolePlayer
     }
   }
 }

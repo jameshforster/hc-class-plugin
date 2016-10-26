@@ -21,7 +21,9 @@ object PlayerController extends PlayerController {
   // $COVERAGE-OFF$
   lazy val serverConnector = ServerConnector
   lazy val config = PluginController.getConfig.get
+
   def playerFile(player: Player) = new File(config.pluginLocation + s"/data/players/${player.getName}.json")
+
   // $COVERAGE-ON$
 }
 
@@ -44,5 +46,17 @@ trait PlayerController {
 
   def setAllPlayerJobs(rolePlayer: RolePlayer): Try[Unit] = {
     serverConnector.setPlayerMetaData[Seq[PlayerJob]](rolePlayer.player, PlayerKeys.allJobs, rolePlayer.allJobs)
+  }
+
+  def updatePlayerJob(rolePlayer: RolePlayer, playerJob: PlayerJob): RolePlayer = {
+    val allJobs = if (rolePlayer.allJobs.forall(!_.job.equals(playerJob.job))) {
+      rolePlayer.allJobs ++: Seq(playerJob)
+    } else {
+      rolePlayer.allJobs.map( job =>
+        if (job.job.equals(playerJob.job)) playerJob
+        else job
+      )
+    }
+    RolePlayer(rolePlayer.player, playerJob, allJobs)
   }
 }
