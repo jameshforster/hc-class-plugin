@@ -24,7 +24,7 @@ class RolePlayerSpec extends UnitSpec with MockitoSugar {
     new RolePlayer(mockPlayer, activeJob, allJobs)
   }
 
-  def setupRolePlayerMethods(newPlayer: Boolean) : RolePlayerMethods = {
+  def setupRolePlayerMethods(newPlayer: Boolean) : RolePlayerConverters = {
 
     val mockPlayerController = mock[PlayerController]
 
@@ -34,7 +34,7 @@ class RolePlayerSpec extends UnitSpec with MockitoSugar {
     when(mockPlayerController.getAllPlayerJobs(Matchers.any()))
       .thenReturn(if (newPlayer) Failure(exception) else Success(Seq(job)))
 
-    new RolePlayerMethods {
+    new RolePlayerConverters {
       override val playerController: PlayerController = mockPlayerController
     }
   }
@@ -91,7 +91,7 @@ class RolePlayerSpec extends UnitSpec with MockitoSugar {
     "create a valid RolePlayer if the player already exists" in {
       val rolePlayer = setupRolePlayerMethods(false)
       val mockPlayer = mock[Player]
-      val result = rolePlayer.apply(mockPlayer)
+      val result = rolePlayer.playerToRolePlayer(mockPlayer)
 
       result shouldBe RolePlayer(mockPlayer, job, Seq(job))
     }
@@ -99,9 +99,9 @@ class RolePlayerSpec extends UnitSpec with MockitoSugar {
     "create a new RolePlayer if the player is not found" in {
       val rolePlayer = setupRolePlayerMethods(true)
       val mockPlayer = mock[Player]
-      val result = rolePlayer.apply(mockPlayer)
+      val result = rolePlayer.playerToRolePlayer(mockPlayer)
 
-      result shouldBe RolePlayer(mockPlayer, PlayerJob(Jobs.Jobless, 0, 0), Seq())
+      result shouldBe RolePlayer(mockPlayer, PlayerJob(Jobs.Jobless, 0, 0), Seq(), newPlayer = true)
     }
   }
 }

@@ -10,25 +10,25 @@ import scala.util.Success
   * Created by james-forster on 31/08/16.
   */
 
-case class RolePlayer (player: Player, activeJob: PlayerJob, allJobs: Seq[PlayerJob])
+case class RolePlayer (player: Player, activeJob: PlayerJob, allJobs: Seq[PlayerJob], newPlayer: Boolean = false)
 
-object RolePlayer extends RolePlayerMethods {
+object RolePlayer extends RolePlayerConverters {
 
   val playerController = PlayerController
 
 }
 
-trait RolePlayerMethods {
+trait RolePlayerConverters {
 
   val playerController: PlayerController
 
-  def apply(player: Player): RolePlayer = {
+  implicit val playerToRolePlayer: Player => RolePlayer = { player =>
     val activeJob = playerController.getActivePlayerJob(player)
     val allJobs = playerController.getAllPlayerJobs(player)
 
     (activeJob, allJobs) match {
       case (Success(job), Success(jobs)) => RolePlayer(player, job, jobs)
-      case _ => RolePlayer(player, PlayerJob(Jobs.Jobless, 0, 0), Seq())
+      case _ => RolePlayer(player, PlayerJob(Jobs.Jobless, 0, 0), Seq(), newPlayer = true)
     }
   }
 
