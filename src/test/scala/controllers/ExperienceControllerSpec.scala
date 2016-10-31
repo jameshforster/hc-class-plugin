@@ -18,6 +18,11 @@ class ExperienceControllerSpec extends UnitSpec with MockitoSugar {
       result shouldBe Some(10)
     }
 
+    "return a 15 with a level of 2" in {
+      val result = ExperienceController.maxExperience(2)
+      result shouldBe Some(15)
+    }
+
     "return a 51 with a level of 5" in {
       val result = ExperienceController.maxExperience(5)
       result shouldBe Some(51)
@@ -59,6 +64,16 @@ class ExperienceControllerSpec extends UnitSpec with MockitoSugar {
     "return a value equal to max exp at 0" in {
       val result = ExperienceController.experienceRemaining(9, 0)
       result shouldBe Some(260)
+    }
+
+    "return a value of 10 at level 1" in {
+      val result = ExperienceController.experienceRemaining(1, 0)
+      result shouldBe Some(10)
+    }
+
+    "return a value of 15 at level 2" in {
+      val result = ExperienceController.experienceRemaining(2, 0)
+      result shouldBe Some(15)
     }
 
     "return a value equal to 25 at level 5 with 26 experience" in {

@@ -31,7 +31,7 @@ trait ExperienceController {
     experienceRemaining(activeJob.level, activeJob.experience) match {
       case Some(data) if data > experience =>
         PlayerController.updatePlayerJob(rolePlayer, PlayerJob(activeJob.job, activeJob.level, activeJob.experience + experience))
-      case Some(data) if data <= experience => ??? //TODO add level up method
+      case Some(data) if data <= experience => LevelController.levelUp(rolePlayer, experience - data)
       case _ => rolePlayer
     }
   }
