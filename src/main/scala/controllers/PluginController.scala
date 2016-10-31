@@ -2,6 +2,8 @@ package controllers
 
 import common.AppConfig
 import listeners.LoginListener
+import net.md_5.bungee.api.CommandSender
+import org.bukkit.command.Command
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -28,5 +30,15 @@ final class Main extends JavaPlugin{
 
   override def onDisable() = {
     PluginController.main = None
+  }
+
+  @Override
+  def onCommand(sender: CommandSender, command: Command, label: String, args: String*): Boolean = {
+    label match {
+      case "setClass" => ???
+      case "levelUp" => ???
+      case "gainExp" => ???
+      case _ => false
+    }
   }
 }
